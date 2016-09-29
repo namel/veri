@@ -1,0 +1,23 @@
+{
+  "name": "veri",
+  "version": "0.9.0",
+  "description": "Enables all the functionality needed for playing VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio",
+  "main": "vr.js",
+  "dependencies": {
+    "ambisonics": "^0.1.0",
+    "three": "^0.75.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.6.0",
+    "eslint-config-google": "^0.6.0"
+  },
+  "scripts": {
+    "build": "browserify src/veri.js -o dist/veri.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Gary Weiss",
+    "email": "garyweiss74@gmail.com"
+  },
+  "license": "MIT"
+}
