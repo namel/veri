@@ -1,8 +1,22 @@
 {
   "name": "veri",
   "version": "0.9.0",
-  "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio",
-  "main": "vr.js",
+  "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio.",
+  "keywords": [
+      "vr", "webvr", "three", "three.js", "webvr", "360", "vive", "oculus"
+  ],
+  "homepage": "https://namel.github.io/veri/",
+  "bugs": {
+      "url": "https://github.com/namel/veri/issues"
+  },
+  "files": [
+      "README.md",
+      "package.json",
+      "resources",
+      "src"
+  ],
+  "main": "src/veri.js",
+  "repository": "namel/veri",
   "dependencies": {
     "ambisonics": "^0.1.0",
     "three": "^0.75.0"
