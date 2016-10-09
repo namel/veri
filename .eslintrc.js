@@ -20,6 +20,7 @@ module.exports = {
         "max-statements-per-line": "off",
         "new-cap": "off",
         "no-console": "off",
+        "no-unused-expressions": "off",
         "no-warning-comments": "off",
         "object-curly-spacing": ["error", "always"],
         "padded-blocks": "off",

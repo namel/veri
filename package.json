@@ -1,7 +1,7 @@
 {
   "name": "veri",
   "version": "0.9.0",
-  "description": "Enables all the functionality needed for playing VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio",
+  "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio",
   "main": "vr.js",
   "dependencies": {
     "ambisonics": "^0.1.0",

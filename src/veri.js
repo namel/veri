@@ -1,4 +1,4 @@
-/* global WEBVR Stats DeviceControls */
+/* global DeviceControls */
 "use strict";
 
 const ee = require('event-emitter');
@@ -6,13 +6,16 @@ const THREE = require('three');
 const WEBVR = require('./lib/WebVR');
 const Stats = require('./lib/stats.min');
 require('./lib/VRControls');
+require('./lib/ViveController');
+require('./lib/OBJLoader');
+require('./lib/VREffect');
 
 const Audio = require('./audio');
 const Crosshairs = require('./crosshairs');
 
 class Veri {
 
-    Veri() {
+    constructor() {
         this.scene = null;
         this.camera = null;
         this.renderer = null;
@@ -53,7 +56,7 @@ class Veri {
 
     // do next animation frame
     doAnimationFrame() {
-        window.requestAnimationFrame(this.doAnimationFrame);
+        window.requestAnimationFrame(this.doAnimationFrame.bind(this));
         if (this.videoPlaying) {
             this.draw(this.renderer.domElement, this.renderer.context, this.videoElement);
             if (typeof this.vrParams.onDraw === 'function') {
@@ -71,7 +74,7 @@ class Veri {
         let cameraDirection = this.camera.getWorldDirection();
         if (!this.originalCameraDirection) {
             this.originalCameraDirection = cameraDirection.clone();
-            console.log(`setting original camera direction to ${this.showVec(this.originalCameraDirection)}`);
+            console.log(`setting original camera direction to ${Veri.showVec(this.originalCameraDirection)}`);
         }
 
         // check element resize
@@ -146,7 +149,7 @@ class Veri {
         }
 
         // update the audio positioning
-        this.audio.changeOrientation(cameraDirection);
+        this.audio && this.audio.changeOrientation(cameraDirection);
 
         // check crosshairs selection
         if (this.crosshairs) {
@@ -247,12 +250,6 @@ class Veri {
         this.vrParams = vrParams;
         if (!vrParams.camera.direction) {
             vrParams.camera.direction = new THREE.Vector3(0, 0, -1);
-        }
-
-        // initialize canvas
-        if (this.vrParams.initializeCanvas === true) {
-            console.log('canvas is controlled by vr plugin');
-            this.doAnimationFrame();
         }
 
         // create scene and camera
@@ -462,6 +459,12 @@ class Veri {
                 }
             }
         }
+    }
+
+    // start rendering
+    start() {
+        this.videoPlaying = true;
+        this.doAnimationFrame();
     }
 }
 
