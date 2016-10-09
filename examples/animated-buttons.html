@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>veri - simple</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #101010;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			a {
+				color: #f00;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="../dist/veri.js"></script>
+		<video id="veri" crossorigin="anonymous" autoplay loop src="https://threejs.org/examples/textures/MaryOculus.webm" style="display: none; width: 100%; height: 100%; background: black;" />
+        <script>
+
+            var veri = new Veri();
+
+            veri.setup({
+                controls: "auto",
+                vrEnabled: true,
+                stereoscopic: "left-to-right",
+                initializeCanvas: true,
+                camera: {
+                    fov: 90,          // wider -> narrower  (10..100)
+                    aspect: window.innerWidth / window.innerHeight,
+                    near: 0.1,
+                    far: 1000,
+                    direction: Veri.vec3(0, 0, -1)
+                },
+                renderer: {
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                },
+                light: {
+                    position: Veri.vec3(2, 2, 2)
+                }
+            });
+
+            veri.start();
+
+		</script>
+	</body>
+</html>

@@ -1,74 +1,52 @@
-# Eko -  Virtual Reality Plugin #
+# veri -  Virtual Reality Video Player #
 
-This plugin allows a project to display 360 and VR videos.  It provides the functionality which
+This library makes it easy to play 360 and VR videos from a browser.  It provides the functionality which
 is often useful with 360/VR videos, such as setting up a canvas and a THREE.js environment
-which renders a 360/VR video; mouse interaction; headset movement detection; hand-held controller interface and rendering; rendering of 3D OBJ
+which renders a 360/VR video; headset movement detection; ambisonic audio interface; hand-held controller interface and rendering; rendering of 3D OBJ
 objects over the video layer, or inside the VR scene, which can serve as buttons, crosshairs, and lots more.
 
 ### Worked Example ###
 
-For basic usage, you will start by including the library in your project.  Here is a sample
-`loader.js` header which requires the plugin:
+For basic usage, you must include the veri library and a video element:
 
-```javascript
-require.config({
-    paths: {
-        'InterludePlayer': 'js/lib/player.min',
-        'InterludePlayerPlugins': 'js/lib/plugins.min',
-        'vr': 'js/lib/vr.min'
-    },
-    shim: {
-        'InterludePlayerPlugins': { deps: ['InterludePlayer'] },
-        'vr': { deps: ['InterludePlayer'] }
-    }
-});
+```html
+<script src="../dist/veri.js"></script>
+<video id="veri" crossorigin="anonymous"  autoplay loop src="https://threejs.org/examples/textures/MaryOculus.webm" style="display: none; width: 100%; height: 100%; background: black;" />
 ```
 
-Then you will need to initialize the VR plugin:
+Then you setup the VR options and start playing:
 
 ```javascript
-player.vr.setup({
-    controls: "auto",     
+var veri = new Veri();
+
+veri.setup({
+    controls: "auto",
     vrEnabled: true,
-    stereoscopic: false,
+    stereoscopic: "left-to-right",
     initializeCanvas: true,
     camera: {
         fov: 90,          // wider -> narrower  (10..100)
         aspect: window.innerWidth / window.innerHeight,
         near: 0.1,
         far: 1000,
-        direction: player.vr.vec3(0, 0, -1)
+        direction: Veri.vec3(0, 0, -1)
     },
     renderer: {
         width: window.innerWidth,
         height: window.innerHeight
     },
     light: {
-        position: player.vr.vec3(2, 2, 2)
+        position: Veri.vec3(2, 2, 2)
     }
 });
+
+veri.start();
 ```
 
-Next, you will need to modify the **embed.html** template by adding these libraries.  Best practice is to store local copies which will be CDN-delivered.
-~~~~html
-<script src="js/lib/three.min.js"></script>
-<script src="js/lib/WebVR.js"></script>
-<script src="js/lib/VREffect.js"></script>
-<script src="js/lib/VRControls.js"></script>
-<script src="js/lib/ViveController.js"></script>
-<script src="js/lib/OBJLoader.js"></script>
-<script src="js/lib/stats.min.js"></script>
-~~~~
-
-Lastly, you can start the VR Plugin by calling `player.vr.start();`.  By setting `initializeCanvas` to `true` you indicate that the plugin should initialize the
-canvas and register itself to draw each frame.  If you do not set this attribute, then you must initialize the canvas yourself, optionally with the canvas plugin, and make sure that `vr.draw()` is called on every frame - but only while the player is actually playing a video.  The `vr.draw()` function must receive the same four arguments as the canvas plugin API: `draw(canvasElement, canvasContext, videoElement, ctx)`.
 
 ### For True VR ###
 
 True VR experiences require a VR headset, such as HTC Vive, Oculus Rift, or Samsung Gear.  This implies two camera perspectives will be rendered.  The implementation is based on WebVR and Three.js.
-
-Ensure the following libraries are included by script tags in the HTML document:
-three.js, WebVR.js, VREffect.js, VRControls.js, ViveController.js, OBJLoader.js, stats.js.  Usually they are placed in the subdirectory **js/lib/** on the HTTP root.
 
 For HTC Vive, there is an OBJ resource available which represents the two HTC Vive controllers, along with texture and spec files, assumed to be in the subdirectory **resources/models/obj/vive-controller/**
 
@@ -82,21 +60,18 @@ The VR plugin supports the following:
 * setup stereoscopic VR, which provides depth
     * side-by-side frames supported
     * top-to-bottom frames supported
-* setup a 360 video
+* setup a monoscopic 360 video
 * setup interaction objects using an overlay.  Objects are 3D objects and their textures, provided in OBJ file format.
     * overlay fixed in the camera's reference frame
     * overlay fixed in the video's reference frame
-* debugging tools
-    * showing the axis
-    * showing fps
 * interaction handling
-    * panning with mouse drag
-    * zoom in/out with mouse wheel
+    * device-driven movement (rotation of mobile device, movement of headset)
+    * panning with mouse drag for 360 video
+    * zoom in/out with mouse wheel for 360 video
     * limit interaction space to avoid overlap with control bar on top and bottom
     * keyboard control
-    * device-driven movement (rotation of mobile device, movement of headset)
 * RayCasting - detect which object was clicked in the scene
-* audio
+* audio implemented by [jsAmbisonics](https://github.com/polarch/JSAmbisonics)
     * positional audio sources
     * ambisonic audio sources
 * crosshairs - a small object at the center of the field of vision for pointing to targets in the VR scene
@@ -106,8 +81,7 @@ The VR plugin supports the following:
 
 The following are not yet supported:
 
-* RTS
-* iPhone special handling
+* iPhone 360 video
 * debugging helpers
     * show axis
     * show fps
@@ -115,7 +89,7 @@ The following are not yet supported:
 ### Complete annotated list of configuration options ###
 
 ```javascript
-player.vr.setup({
+veri.setup({
 
     // controls:
     // "auto" will auto-detect.  Can be set to "device", "mouse"
@@ -123,13 +97,13 @@ player.vr.setup({
 
     // vrEnabled:
     // if set to true, and VR hardware is found, then the
-    // the video is rendered on the VR hardware
+    // the video is rendered on the VR hardware, using WebVR
     vrEnabled: true,
 
     // stereoscopic:
-    // most videos are monoscopic and don't need to set this.
     // can be set to "side-by-side" if the eye frames
     // are next to each other, or "top-to-bottom"
+    // monoscopic videos don't set this.
     stereoscopic: "side-by-side",
 
     // debug:  (OPTIONAL)
@@ -139,21 +113,15 @@ player.vr.setup({
         showFPS: false
     },
 
-    // initializeCanvas:
-    // when set to true, the vr plugin will initialize the canvas for you,
-    // and register itself as the canvas draw function.  It will also ensure
-    // that it must render when the player is actually playing.
-    initializeCanvas: true,
-
     // camera:
     // position and camera settings.  For more information refer to THREEjs
     camera: {
-        pos: player.vr.vec3(0, 0, 0),
+        pos: Veri.vec3(0, 0, 0),
         fov: 35,          // wider -> narrower  (10..100)
         aspect: window.innerWidth / window.innerHeight,
         near: 0.1,
         far: 1000,
-        direction: player.vr.vec3(0, 0, -1) // the lookAt vector3
+        direction: Veri.vec3(0, 0, -1) // the lookAt vector3
     },
 
     // crosshairs:
@@ -170,11 +138,11 @@ player.vr.setup({
     // Note: use the event emitter to determine crosshairs state.
     crosshairs: {
         targets: [ {
-            name: "start",
-            direction: player.vr.vec3(-1, 0, -1)
+            name: "play",
+            direction: Veri.vec3(-1, 0, -1)
         }, {
-            name: "exit",
-            direction: player.vr.vec3(-1, 0, -1)
+            name: "stop",
+            direction: Veri.vec3(-1, 0, -1)
         }],
         hitRadius: 0.1,
         hitTime: 6000,
@@ -208,8 +176,8 @@ player.vr.setup({
     //     positional: provide a position vector (for positional type)
     audio: {
         type: "positional",
-        src: "https://d1w2zhnqcy4l8f.cloudfront.net/projects/vive/audio/BF_rec1.ogg",
-        position: player.vr.vec3(0, 0, 0)
+        src: "https://upload.wikimedia.org/wikipedia/commons/2/2a/20091104_Alisa_Weilerstein_and_Jason_Yoder_-_Saint_Sa%C3%ABns%27_The_Swan.ogg",
+        position: Veri.vec3(0, 0, -10)
     }
 
     // objects: (OPTIONAL)
@@ -229,14 +197,14 @@ player.vr.setup({
     objects: {
         stopButton: {
             resource: 'resources/obj/s-stop.obj',
-            position: player.vr.vec3(-1, 0, -5),
+            position: Veri.vec3(-1, 0, -5),
             color: 0xc8955c,
             movesWithCamera: false,
             handler: clickHandler  
         },
         goButton: {
             resource: 'resources/obj/s-rev-fwd.obj',
-            position: player.vr.vec3(1, 0, -5),
+            position: Veri.vec3(1, 0, -5),
             color: 0xc8955c,
             movesWithCamera: false,
             handler: clickHandler
@@ -246,72 +214,72 @@ player.vr.setup({
     // light: (OPTIONAL)
     // this is only needed if objects are provided, to light up those objects.
     light: {
-        position: player.vr.vec3(2, 2, 2)
+        position: Veri.vec3(2, 2, 2)
     }
 });
 ```
 
 ### Events ###
 
-`vr.click` - emitted when the user clicked on an object.
+`click` - emitted when the user clicked on an object.
 
 ```javascript
-player.on('vr.click', function(objName) {
+veri.on('click', function(objName) {
         console.log('you clicked on ' + objName);
 });
 ```
 
-`vr.frame` - emitted on every frame, it contains a vector3 which reflects the
+`frame` - emitted on every frame, it contains a Vector3 which reflects the
 camera direction.  For example, you can use this to check if the viewer
 is currently looking at a specific angle range.
 
 Sample code to check angle:
 ```javascript
-player.on('vr.frame', function(camera) {
-    var directionOnXZPlane = camera.projectOnPlane(player.vr.vec3(0, 1, 0));
+veri.on('frame', function(camera) {
+    var directionOnXZPlane = camera.projectOnPlane(Veri.vec3(0, 1, 0));
     var quaternion = (new THREE.Quaternion()).setFromUnitVectors(cameraCenter, directionOnXZPlane);
     var euler = (new THREE.Euler()).setFromQuaternion(quaternion);
     var angle = euler.y;
 });
 ```
 
-`vr.ready` - emitted when the 3D scene is built.  The next animation frame will render the scene.
+`ready` - emitted when the 3D scene is built.
 
 ```javascript
-player.on('vr.ready', function(objName) {
-        console.log('vr setup complete');
+veri.on('ready', function(objName) {
+    console.log('vr setup complete');
 });
 ```
 
-`vr.targetEnter` - crosshairs have entered a named target.
+`targetEnter` - crosshairs have entered a named target.
 
 ```javascript
-player.on('vr.targetEnter', function(target) {
-        console.log('looking at ' + target);
+veri.on('targetEnter', function(target) {
+    console.log('looking at ' + target);
 });
 ```
 
-`vr.targetExit` - crosshairs have exited a named target.
+`targetExit` - crosshairs have exited a named target.
 
 ```javascript
-player.on('vr.targetExit', function(target) {
-        console.log('no longer looking at ' + target);
+veri.on('targetExit', function(target) {
+    console.log('no longer looking at ' + target);
 });
 
 ```
 
-`vr.targetStay` - crosshairs are still inside a named target.
+`targetStay` - crosshairs are still inside a named target.
 
 ```javascript
-player.on('vr.targetStay', function(target) {
-        console.log('still looking at ' + target);
+veri.on('targetStay', function(target) {
+    console.log('still looking at ' + target);
 });
 ```
 
-`vr.targetSelected` - crosshairs have stayed inside a named target enough time so that the target is now selected ("clicked").
+`targetSelected` - crosshairs have stayed inside a named target enough time so that the target is now selected ("clicked").
 
 ```javascript
-player.on('vr.targetSelected', function(target) {
+veri.on('targetSelected', function(target) {
         console.log('crosshairs selected target: ' + target);
 });
 ```
