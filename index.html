@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Veri by namel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Veri</h1>
+      <h2 class="project-tagline">Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio.</h2>
+      <a href="https://github.com/namel/veri" class="btn">View on GitHub</a>
+      <a href="https://github.com/namel/veri/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/namel/veri/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="veri----virtual-reality-video-player" class="anchor" href="#veri----virtual-reality-video-player" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>veri -  Virtual Reality Video Player</h1>
+
+<p>This library makes it easy to play 360 and VR videos from a browser.  It provides the functionality which
+is often useful with 360/VR videos, such as setting up a canvas and a THREE.js environment
+which renders a 360/VR video; headset movement detection; ambisonic audio interface; hand-held controller interface and rendering; rendering of 3D OBJ
+objects over the video layer, or inside the VR scene, which can serve as buttons, crosshairs, and lots more.</p>
+
+<h3>
+<a id="worked-example" class="anchor" href="#worked-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Worked Example</h3>
+
+<p>For basic usage, you must include the veri library and a video element:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>../dist/veri.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+&lt;<span class="pl-ent">video</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>veri<span class="pl-pds">"</span></span> <span class="pl-e">crossorigin</span>=<span class="pl-s"><span class="pl-pds">"</span>anonymous<span class="pl-pds">"</span></span>  <span class="pl-e">autoplay</span> <span class="pl-e">loop</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>https://threejs.org/examples/textures/MaryOculus.webm<span class="pl-pds">"</span></span> <span class="pl-e">style</span>=<span class="pl-s"><span class="pl-pds">"</span>display: none; width: 100%; height: 100%; background: black;<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<p>Then you setup the VR options and start playing:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> veri <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Veri</span>();
+
+<span class="pl-smi">veri</span>.<span class="pl-en">setup</span>({
+    controls<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>auto<span class="pl-pds">"</span></span>,
+    vrEnabled<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+    stereoscopic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>left-to-right<span class="pl-pds">"</span></span>,
+    initializeCanvas<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+    camera<span class="pl-k">:</span> {
+        fov<span class="pl-k">:</span> <span class="pl-c1">90</span>,          <span class="pl-c">// wider -&gt; narrower  (10..100)</span>
+        aspect<span class="pl-k">:</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerWidth</span> <span class="pl-k">/</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerHeight</span>,
+        near<span class="pl-k">:</span> <span class="pl-c1">0.1</span>,
+        far<span class="pl-k">:</span> <span class="pl-c1">1000</span>,
+        direction<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">1</span>)
+    },
+    renderer<span class="pl-k">:</span> {
+        width<span class="pl-k">:</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerWidth</span>,
+        height<span class="pl-k">:</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerHeight</span>
+    },
+    light<span class="pl-k">:</span> {
+        position<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>)
+    }
+});
+
+<span class="pl-smi">veri</span>.<span class="pl-c1">start</span>();</pre></div>
+
+<h3>
+<a id="for-true-vr" class="anchor" href="#for-true-vr" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>For True VR</h3>
+
+<p>True VR experiences require a VR headset, such as HTC Vive, Oculus Rift, or Samsung Gear.  This implies two camera perspectives will be rendered.  The implementation is based on WebVR and Three.js.</p>
+
+<p>For HTC Vive, there is an OBJ resource available which represents the two HTC Vive controllers, along with texture and spec files, assumed to be in the subdirectory <strong>resources/models/obj/vive-controller/</strong></p>
+
+<h3>
+<a id="functionality-list" class="anchor" href="#functionality-list" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Functionality List</h3>
+
+<p>The VR plugin supports the following:</p>
+
+<ul>
+<li>setup a <a href="http://threejs.org/">THREE js</a> canvas</li>
+<li>setup a scene: camera, lighting, walls</li>
+<li>setup VR (requires VR hardware)</li>
+<li>setup stereoscopic VR, which provides depth
+
+<ul>
+<li>side-by-side frames supported</li>
+<li>top-to-bottom frames supported</li>
+</ul>
+</li>
+<li>setup a monoscopic 360 video</li>
+<li>setup interaction objects using an overlay.  Objects are 3D objects and their textures, provided in OBJ file format.
+
+<ul>
+<li>overlay fixed in the camera's reference frame</li>
+<li>overlay fixed in the video's reference frame</li>
+</ul>
+</li>
+<li>interaction handling
+
+<ul>
+<li>device-driven movement (rotation of mobile device, movement of headset)</li>
+<li>panning with mouse drag for 360 video</li>
+<li>zoom in/out with mouse wheel for 360 video</li>
+<li>limit interaction space to avoid overlap with control bar on top and bottom</li>
+<li>keyboard control</li>
+</ul>
+</li>
+<li>RayCasting - detect which object was clicked in the scene</li>
+<li>audio implemented by <a href="https://github.com/polarch/JSAmbisonics">jsAmbisonics</a>
+
+<ul>
+<li>positional audio sources</li>
+<li>ambisonic audio sources</li>
+</ul>
+</li>
+<li>crosshairs - a small object at the center of the field of vision for pointing to targets in the VR scene
+
+<ul>
+<li>default circle animation</li>
+<li>supports sprite animation</li>
+</ul>
+</li>
+<li>general event emitter functionality</li>
+</ul>
+
+<p>The following are not yet supported:</p>
+
+<ul>
+<li>iPhone 360 video</li>
+<li>debugging helpers
+
+<ul>
+<li>show axis</li>
+<li>show fps</li>
+</ul>
+</li>
+</ul>
+
+<h3>
+<a id="complete-annotated-list-of-configuration-options" class="anchor" href="#complete-annotated-list-of-configuration-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Complete annotated list of configuration options</h3>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">setup</span>({
+
+    <span class="pl-c">// controls:</span>
+    <span class="pl-c">// "auto" will auto-detect.  Can be set to "device", "mouse"</span>
+    controls<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>auto<span class="pl-pds">"</span></span>,     <span class="pl-c">// auto-detect</span>
+
+    <span class="pl-c">// vrEnabled:</span>
+    <span class="pl-c">// if set to true, and VR hardware is found, then the</span>
+    <span class="pl-c">// the video is rendered on the VR hardware, using WebVR</span>
+    vrEnabled<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+
+    <span class="pl-c">// stereoscopic:</span>
+    <span class="pl-c">// can be set to "side-by-side" if the eye frames</span>
+    <span class="pl-c">// are next to each other, or "top-to-bottom"</span>
+    <span class="pl-c">// monoscopic videos don't set this.</span>
+    stereoscopic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>side-by-side<span class="pl-pds">"</span></span>,
+
+    <span class="pl-c">// debug:  (OPTIONAL)</span>
+    <span class="pl-c">// here you can request display of axis or fps</span>
+    debug<span class="pl-k">:</span> {
+        showAxis<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+        showFPS<span class="pl-k">:</span> <span class="pl-c1">false</span>
+    },
+
+    <span class="pl-c">// camera:</span>
+    <span class="pl-c">// position and camera settings.  For more information refer to THREEjs</span>
+    camera<span class="pl-k">:</span> {
+        pos<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>),
+        fov<span class="pl-k">:</span> <span class="pl-c1">35</span>,          <span class="pl-c">// wider -&gt; narrower  (10..100)</span>
+        aspect<span class="pl-k">:</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerWidth</span> <span class="pl-k">/</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerHeight</span>,
+        near<span class="pl-k">:</span> <span class="pl-c1">0.1</span>,
+        far<span class="pl-k">:</span> <span class="pl-c1">1000</span>,
+        direction<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">1</span>) <span class="pl-c">// the lookAt vector3</span>
+    },
+
+    <span class="pl-c">// crosshairs:</span>
+    <span class="pl-c">// provide a list of targets that the crosshairs can activate</span>
+    <span class="pl-c">// each target must have a name and direction</span>
+    <span class="pl-c">// hitRadius - radians offset which is considered</span>
+    <span class="pl-c">//     part of the target</span>
+    <span class="pl-c">// hitTime - time in milliseconds until the target is considered "clicked"</span>
+    <span class="pl-c">// sprite - optional sprite for animation.  Include src,</span>
+    <span class="pl-c">//     columns, rows, and count.</span>
+    <span class="pl-c">//     If not specified</span>
+    <span class="pl-c">//     then a small ring is used to indicate selection progress</span>
+    <span class="pl-c">//</span>
+    <span class="pl-c">// Note: use the event emitter to determine crosshairs state.</span>
+    crosshairs<span class="pl-k">:</span> {
+        targets<span class="pl-k">:</span> [ {
+            name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>play<span class="pl-pds">"</span></span>,
+            direction<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-k">-</span><span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">1</span>)
+        }, {
+            name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>stop<span class="pl-pds">"</span></span>,
+            direction<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-k">-</span><span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">1</span>)
+        }],
+        hitRadius<span class="pl-k">:</span> <span class="pl-c1">0.1</span>,
+        hitTime<span class="pl-k">:</span> <span class="pl-c1">6000</span>,
+        sprite<span class="pl-k">:</span> {
+            src<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>../resources/sprite/all2048.png<span class="pl-pds">"</span></span>,
+            columns<span class="pl-k">:</span> <span class="pl-c1">16</span>,
+            rows<span class="pl-k">:</span> <span class="pl-c1">13</span>,
+            count<span class="pl-k">:</span> <span class="pl-c1">208</span>
+        }
+    },
+
+    <span class="pl-c">// renderer:</span>
+    <span class="pl-c">// specify width and height</span>
+    renderer<span class="pl-k">:</span> {
+        width<span class="pl-k">:</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerWidth</span>,
+        height<span class="pl-k">:</span> <span class="pl-c1">window</span>.<span class="pl-c1">innerHeight</span>
+    },
+
+    <span class="pl-c">// sphere360: (OPTIONAL)</span>
+    <span class="pl-c">// specify parameters for the rendering sphere.  </span>
+    sphere360<span class="pl-k">:</span> {
+        radius<span class="pl-k">:</span> <span class="pl-c1">500</span>,
+        hide<span class="pl-k">:</span> <span class="pl-c1">false</span>
+    },
+
+    <span class="pl-c">// audio: (OPTIONAL)</span>
+    <span class="pl-c">// supports both positional and ambisonic audio encoded in B-format</span>
+    <span class="pl-c">// attributes:</span>
+    <span class="pl-c">//     src: url of the source audio file</span>
+    <span class="pl-c">//     type: can be "positional" or "ambisonic"</span>
+    <span class="pl-c">//     positional: provide a position vector (for positional type)</span>
+    audio<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>positional<span class="pl-pds">"</span></span>,
+        src<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>https://upload.wikimedia.org/wikipedia/commons/2/2a/20091104_Alisa_Weilerstein_and_Jason_Yoder_-_Saint_Sa%C3%ABns%27_The_Swan.ogg<span class="pl-pds">"</span></span>,
+        position<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">10</span>)
+    }
+
+    <span class="pl-c">// objects: (OPTIONAL)</span>
+    <span class="pl-c">// specify a dictionary of objects which should be rendered.  These typically</span>
+    <span class="pl-c">// would be the buttons that the user can click or tap on.  Each object should</span>
+    <span class="pl-c">// provide:</span>
+    <span class="pl-c">//     resource: a relative path for the OBJ file</span>
+    <span class="pl-c">//     movesWithCamera: true if the object must remain fixed in the camera's frame</span>
+    <span class="pl-c">//         as the camera moves about</span>
+    <span class="pl-c">//     position: if the object does not move with the camera, this is a fixed</span>
+    <span class="pl-c">//         position in the scene space.  If it does move with the camera, this</span>
+    <span class="pl-c">//         becomes a 3-vector relative to the camera.</span>
+    <span class="pl-c">//     color: provide a hex color</span>
+    <span class="pl-c">//     handler: function that should be called when the object is clicked.  The name</span>
+    <span class="pl-c">//         of the object will be passed to the handler, so the same handler can be</span>
+    <span class="pl-c">//         specified on all of the objects if desired.</span>
+    objects<span class="pl-k">:</span> {
+        stopButton<span class="pl-k">:</span> {
+            resource<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>resources/obj/s-stop.obj<span class="pl-pds">'</span></span>,
+            position<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-k">-</span><span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">5</span>),
+            color<span class="pl-k">:</span> <span class="pl-c1">0xc8955c</span>,
+            movesWithCamera<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+            handler<span class="pl-k">:</span> clickHandler  
+        },
+        goButton<span class="pl-k">:</span> {
+            resource<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>resources/obj/s-rev-fwd.obj<span class="pl-pds">'</span></span>,
+            position<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-k">-</span><span class="pl-c1">5</span>),
+            color<span class="pl-k">:</span> <span class="pl-c1">0xc8955c</span>,
+            movesWithCamera<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+            handler<span class="pl-k">:</span> clickHandler
+        }
+    },
+
+    <span class="pl-c">// light: (OPTIONAL)</span>
+    <span class="pl-c">// this is only needed if objects are provided, to light up those objects.</span>
+    light<span class="pl-k">:</span> {
+        position<span class="pl-k">:</span> <span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>)
+    }
+});</pre></div>
+
+<h3>
+<a id="events" class="anchor" href="#events" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Events</h3>
+
+<p><code>click</code> - emitted when the user clicked on an object.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>click<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">objName</span>) {
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>you clicked on <span class="pl-pds">'</span></span> <span class="pl-k">+</span> objName);
+});</pre></div>
+
+<p><code>frame</code> - emitted on every frame, it contains a Vector3 which reflects the
+camera direction.  For example, you can use this to check if the viewer
+is currently looking at a specific angle range.</p>
+
+<p>Sample code to check angle:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>frame<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">camera</span>) {
+    <span class="pl-k">var</span> directionOnXZPlane <span class="pl-k">=</span> <span class="pl-smi">camera</span>.<span class="pl-en">projectOnPlane</span>(<span class="pl-smi">Veri</span>.<span class="pl-en">vec3</span>(<span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>));
+    <span class="pl-k">var</span> quaternion <span class="pl-k">=</span> (<span class="pl-k">new</span> <span class="pl-en">THREE.Quaternion</span>()).<span class="pl-en">setFromUnitVectors</span>(cameraCenter, directionOnXZPlane);
+    <span class="pl-k">var</span> euler <span class="pl-k">=</span> (<span class="pl-k">new</span> <span class="pl-en">THREE.Euler</span>()).<span class="pl-en">setFromQuaternion</span>(quaternion);
+    <span class="pl-k">var</span> angle <span class="pl-k">=</span> <span class="pl-smi">euler</span>.<span class="pl-c1">y</span>;
+});</pre></div>
+
+<p><code>ready</code> - emitted when the 3D scene is built.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>ready<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">objName</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>vr setup complete<span class="pl-pds">'</span></span>);
+});</pre></div>
+
+<p><code>targetEnter</code> - crosshairs have entered a named target.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>targetEnter<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">target</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>looking at <span class="pl-pds">'</span></span> <span class="pl-k">+</span> target);
+});</pre></div>
+
+<p><code>targetExit</code> - crosshairs have exited a named target.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>targetExit<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">target</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>no longer looking at <span class="pl-pds">'</span></span> <span class="pl-k">+</span> target);
+});
+</pre></div>
+
+<p><code>targetStay</code> - crosshairs are still inside a named target.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>targetStay<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">target</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>still looking at <span class="pl-pds">'</span></span> <span class="pl-k">+</span> target);
+});</pre></div>
+
+<p><code>targetSelected</code> - crosshairs have stayed inside a named target enough time so that the target is now selected ("clicked").</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">veri</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>targetSelected<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">target</span>) {
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>crosshairs selected target: <span class="pl-pds">'</span></span> <span class="pl-k">+</span> target);
+});</pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/namel/veri">Veri</a> is maintained by <a href="https://github.com/namel">namel</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
