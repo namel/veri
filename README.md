@@ -20,6 +20,9 @@ more information on that.
 For a regular PC or Mac with no headset attached, you can still view 360
 videos, or add the [WebVR API Emulation](https://chrome.google.com/webstore/detail/webvr-api-emulation/gbdnpaebafagioggnhkacnaaahpiefil) extension which shows you what would be seen on the headset.
 
+For more information see the [Veri Home Page](https://namel.github.io/veri/)
+
+
 ### Worked Example ###
 
 For basic usage, you must include the veri library and a video element:
