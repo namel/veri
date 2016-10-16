@@ -20,15 +20,16 @@
 	<body>
 
 		<script src="../dist/veri.js"></script>
-		<video id="veri" crossorigin="anonymous" autoplay loop src="https://threejs.org/examples/textures/MaryOculus.webm" style="display: none; width: 100%; height: 100%; background: black;" />
+		<video id="veri" crossorigin="anonymous" autoplay loop
+        src="http://flimshaw.github.io/Valiant360/videos/overpass-2k.mp4"
+        style="display: none; width: 100%; height: 100%; background: black;" />
         <script>
 
             var veri = new Veri();
 
             veri.setup({
                 controls: "auto",
-                vrEnabled: true,
-                stereoscopic: "left-to-right",
+                vrEnabled: false,
                 initializeCanvas: true,
                 camera: {
                     fov: 90,          // wider -> narrower  (10..100)

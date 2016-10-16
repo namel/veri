@@ -34,10 +34,12 @@
     "eslint-config-google": "^0.6.0",
     "http-server": "^0.9.0",
     "opener": "^1.4.2",
-    "parallelshell": "^2.0.0"
+    "parallelshell": "^2.0.0",
+    "watchify": "^3.7.0"
   },
   "scripts": {
     "build": "browserify src/veri.js -o dist/veri.js",
+    "watch": "watchify src/veri.js -o dist/veri.js",
     "open": "opener http://127.0.0.1:8080/examples/simple.html",
     "serve": "node .\\node_modules\\http-server\\bin\\http-server",
     "test": "parallelshell \"npm run serve\" \"npm run open\""

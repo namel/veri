@@ -1,4 +1,4 @@
-/* global DeviceControls */
+/* global DeviceOrientationController */
 "use strict";
 
 const ee = require('event-emitter');
@@ -9,7 +9,7 @@ require('./lib/VRControls');
 require('./lib/ViveController');
 require('./lib/OBJLoader');
 require('./lib/VREffect');
-
+const DeviceOrientationController = require('./lib/DeviceOrientationController');
 const Audio = require('./audio');
 const Crosshairs = require('./crosshairs');
 
@@ -239,11 +239,11 @@ class Veri {
             if (WEBVR.isLatestAvailable() === false) {
                 document.body.appendChild(WEBVR.getMessage());
             }
-
-            // add the stats
-            this.stats = new Stats();
-            document.body.appendChild(this.stats.dom);
         }
+
+        // add the stats
+        this.stats = new Stats();
+        document.body.appendChild(this.stats.dom);
 
         // obtain parameters, applying defaults where necessary
         // TODO: add generic & recursive defaults application
@@ -292,13 +292,15 @@ class Veri {
         this.renderer.setClearColor(0x505050);
         document.body.appendChild(this.renderer.domElement);
 
-        // non-VR case: create controls using "DeviceControls"
+        // control orientation
         if (vrParams.vrEnabled) {
             // VR case: use VRControls
             this.controls = new THREE.VRControls(this.camera);
             this.controls.standing = true;
         } else {
-            this.controls = new DeviceControls(this.camera);
+            // non-VR case: use threeVR
+            this.controls = new DeviceOrientationController(this.camera);
+            this.controls.connect();
         }
 
         // create ThreeJS mesh sphere onto which our texture will be drawn
