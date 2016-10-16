@@ -1,9 +1,24 @@
 # veri -  Virtual Reality Video Player #
 
-This library makes it easy to play 360 and VR videos from a browser.  It provides the functionality which
-is often useful with 360/VR videos, such as setting up a canvas and a THREE.js environment
-which renders a 360/VR video; headset movement detection; ambisonic audio interface; hand-held controller interface and rendering; rendering of 3D OBJ
-objects over the video layer, or inside the VR scene, which can serve as buttons, crosshairs, and lots more.
+This javascript library makes it easy to play VR videos from a browser.
+You can use it to play VR videos in HTC Vive, Oculus Rift, and Samsung
+Gear.  It provides the functionality which is often useful with VR videos,
+such as headset movement detection; ambisonic audio interface; hand-held
+controller interface and rendering; rendering of 3D OBJ objects over the
+video layer, or inside the VR scene, which can serve as buttons or
+crosshairs.
+
+When embedded in an HTML page, Veri will set up a WebGL canvas and a THREE.js WebVR environment which renders a VR video.  It can play stereoscopic videos (side-by-side and
+top-to-bottom) as well as monoscopic videos.
+
+To view the video you will need a browser which supports WebVR.  For HTC
+Vive this means you will need to download a special build of Chromium.  For
+Oculus Rift you will need a WebVR version of Mozilla, and on Samsung Gear you
+can use the Samsung Internet browser.  See [WebVR Info](webvr.info) for
+more information on that.
+
+For a regular PC or Mac with no headset attached, you can still view 360
+videos, or add the [WebVR API Emulation](https://chrome.google.com/webstore/detail/webvr-api-emulation/gbdnpaebafagioggnhkacnaaahpiefil) extension which shows you what would be seen on the headset.
 
 ### Worked Example ###
 
@@ -11,7 +26,13 @@ For basic usage, you must include the veri library and a video element:
 
 ```html
 <script src="../dist/veri.js"></script>
-<video id="veri" crossorigin="anonymous"  autoplay loop src="https://threejs.org/examples/textures/MaryOculus.webm" style="display: none; width: 100%; height: 100%; background: black;" />
+<video
+id="veri"
+crossorigin="anonymous"
+autoplay
+loop
+src="https://threejs.org/examples/textures/MaryOculus.webm"
+style="display: none; width: 100%; height: 100%; background: black;" />
 ```
 
 Then you setup the VR options and start playing:
@@ -48,9 +69,7 @@ veri.start();
 
 True VR experiences require a VR headset, such as HTC Vive, Oculus Rift, or Samsung Gear.  This implies two camera perspectives will be rendered.  The implementation is based on WebVR and Three.js.
 
-For HTC Vive, there is an OBJ resource available which represents the two HTC Vive controllers, along with texture and spec files, assumed to be in the subdirectory **resources/models/obj/vive-controller/**
-
-### Functionality List ###
+### Full Functionality List ###
 
 The VR plugin supports the following:
 
