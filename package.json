@@ -1,6 +1,6 @@
 {
   "name": "veri",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio.",
   "keywords": [
     "vr",
