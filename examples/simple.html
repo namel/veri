@@ -26,6 +26,7 @@
             var veri = new Veri();
 
             veri.setup({
+                debug: false,
                 controls: "auto",
                 vrEnabled: true,
                 stereoscopic: "left-to-right",
@@ -35,7 +36,7 @@
                     aspect: window.innerWidth / window.innerHeight,
                     near: 0.1,
                     far: 1000,
-                    direction: Veri.vec3(0, 0, -1)
+                    direction: Veri.vec3(-1, 0, 0)
                 },
                 renderer: {
                     width: window.innerWidth,

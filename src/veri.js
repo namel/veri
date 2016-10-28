@@ -68,10 +68,17 @@ class Veri {
     // the draw functionality to render each frame
     draw(canvasElement, canvasContext, videoElement) {
 
+        // show current angle for debugging purposes
+        let cameraDirection = this.camera.getWorldDirection();
+        if (this.vrParams.debug) {
+            this.debugCounter++;
+            if (this.debugCounter % 90 === 0)
+                console.log(`angle is ${Veri.showVec(cameraDirection)}`);
+        }
+
         // update the position of the camera
         this.controls.update();
         this.stats.update();
-        let cameraDirection = this.camera.getWorldDirection();
         if (!this.originalCameraDirection) {
             this.originalCameraDirection = cameraDirection.clone();
             console.log(`setting original camera direction to ${Veri.showVec(this.originalCameraDirection)}`);
@@ -217,6 +224,10 @@ class Veri {
         let that = this;
         window.VR = this;
 
+        // debugging
+        if (vrParams.debug)
+            this.debugCounter = 0;
+
         // Interface tools
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
@@ -250,6 +261,8 @@ class Veri {
         this.vrParams = vrParams;
         if (!vrParams.camera.direction) {
             vrParams.camera.direction = new THREE.Vector3(0, 0, -1);
+        } else {
+            vrParams.camera.direction.normalize();
         }
 
         // create scene and camera
