@@ -54,13 +54,9 @@ class Crosshairs {
                 sprite.texture = spriteTexture;
                 sprite.texture.wrapS = sprite.texture.wrapT = THREE.RepeatWrapping;
 
-                if (!sprite.width || !sprite.height) {
-                    sprite.texture.repeat.set(1 / sprite.columns, 1 / sprite.rows);
-                } else {
-                    var repeatX = sprite.width / sprite.texture.image.width;
-                    var repeatY = sprite.height / sprite.texture.image.height;
-                    sprite.texture.repeat.set(repeatX, repeatY);
-                }
+                var repeatX = 1 / sprite.columns;
+                var repeatY = 1 / sprite.rows;
+                sprite.texture.repeat.set(repeatX, repeatY);
                 var geometry = new THREE.PlaneGeometry(sprite.objWidth, sprite.objHeight, 1, 1);
                 var spriteMaterial = new THREE.MeshBasicMaterial({
                     transparent: true,
