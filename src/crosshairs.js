@@ -25,68 +25,94 @@ class Crosshairs {
         return `[${v.x}, ${v.y}, ${v.z}]`;
     }
 
-    init(_scene, _params, _eventEmitter) {
-        this.scene = _scene;
-        this.params = _params;
-        this.eventEmitter = _eventEmitter;
+    init(scene, params, eventEmitter) {
+        this.scene = scene;
+        this.params = params;
+        this.eventEmitter = eventEmitter;
+
+        // check the crosshairs type
+        if (params.type !== 'animated-crosshairs' && params.type !== 'animated-buttons') {
+            var msg = 'unknown crosshairs type';
+            console.log(msg);
+            throw new Error(msg);
+        }
     }
 
-    updateSprite(percent, position) {
+    updateSprite(percent, direction, position) {
 
+        // load the sprite image now if this hasn't happened yet
+        var sprite = this.params.sprite;
         if (!this.spriteLoadingStarted) {
 
             // instantiate a loader
             var loader = new THREE.TextureLoader();
+            loader.crossOrigin = "";
 
             // load a resource
             this.spriteLoadingStarted = true;
-            loader.load(this.params.sprite.src, function(_spriteTexture) {
-                this.spriteTexture = _spriteTexture;
-                this.spriteTexture.wrapS = this.spriteTexture.wrapT = THREE.RepeatWrapping;
-                this.spriteTexture.repeat.set(1 / this.params.sprite.columns, 1 / this.params.sprite.rows);
+            loader.load(sprite.src, spriteTexture => {
+                sprite.texture = spriteTexture;
+                sprite.texture.wrapS = sprite.texture.wrapT = THREE.RepeatWrapping;
+
+                if (!sprite.width || !sprite.height) {
+                    sprite.texture.repeat.set(1 / sprite.columns, 1 / sprite.rows);
+                } else {
+                    var repeatX = sprite.width / sprite.texture.image.width;
+                    var repeatY = sprite.height / sprite.texture.image.height;
+                    sprite.texture.repeat.set(repeatX, repeatY);
+                }
+                var geometry = new THREE.PlaneGeometry(sprite.objWidth, sprite.objHeight, 1, 1);
                 var spriteMaterial = new THREE.MeshBasicMaterial({
                     transparent: true,
-                    map: this.spriteTexture,
+                    map: sprite.texture,
                     side: THREE.DoubleSide
                 });
-                var geometry = new THREE.PlaneGeometry(50, 50, 1, 1);
-                this.crosshairsSprite = new THREE.Mesh(geometry, spriteMaterial);
-                this.scene.add(this.crosshairsSprite);
+
+                sprite.mesh = new THREE.Mesh(geometry, spriteMaterial);
+                sprite.mesh.position.copy(direction).multiplyScalar(sprite.distance);
+                sprite.mesh.lookAt(new THREE.Vector3(0, 0, 0));
+                this.scene.add(sprite.mesh);
                 console.log("crosshairs sprite finished loading");
             });
         }
 
-        if (!this.crosshairsSprite) {
+        // no mesh? try later
+        if (!sprite.mesh) {
             return;
         }
 
-        // TODO: position and orientation are similar here and below
-        // and in the general case of objects.  This code should be
-        // in a common lib
-        this.crosshairsSprite.position.copy(position).multiplyScalar(200);
-        var cameraRotationQuaternion = (new THREE.Quaternion())
-            .setFromUnitVectors(new THREE.Vector3(0, 0, 1), position);
-        this.crosshairsSprite.rotation.setFromQuaternion(cameraRotationQuaternion);
+        // option to remove the sprite
+        sprite.mesh.visible = !sprite.hide;
+
+        // if the crosshairs sprite direction changes, update position and rotation
+        if (direction) {
+            if (direction instanceof THREE.Euler) {
+                direction = (new THREE.Vector3(0, 1, 0)).applyEuler(direction);
+            }
+            sprite.mesh.position.copy(direction).multiplyScalar(sprite.distance);
+            sprite.mesh.lookAt(new THREE.Vector3(0, 0, 0));
+        }
 
         // update the sprite
-        var imageIndex = Math.floor(this.params.sprite.count * percent);
-        var col = imageIndex % this.params.sprite.columns;
-        var row = (Math.floor(imageIndex / this.params.sprite.columns));
-        this.spriteTexture.offset.x = col / this.params.sprite.columns;
-        this.spriteTexture.offset.y = 1 - row / this.params.sprite.rows;
-        if (this.spriteTexture.offset.y !== window.oldY ||
-            this.spriteTexture.offset.x !== window.oldX) {
-            window.oldY = this.spriteTexture.offset.y;
-            window.oldX = this.spriteTexture.offset.x;
+        var imageIndex = Math.floor(sprite.count * percent);
+
+        sprite.texture.offset.x = (imageIndex % sprite.columns) / sprite.columns;
+        sprite.texture.offset.y = 1 - (Math.floor(imageIndex / sprite.columns) + 1) / sprite.rows;
+
+        if (sprite.texture.offset.y !== window.oldY ||
+            sprite.texture.offset.x !== window.oldX) {
+            window.oldY = sprite.texture.offset.y;
+            window.oldX = sprite.texture.offset.x;
             if (this.params.debug) {
-                console.log(`setting sprites to ${this.spriteTexture.offset.x} ${this.spriteTexture.offset.y}`);
+                var offset = sprite.texture.offset;
+                console.log(`percent=${percent} setting sprites to ${offset.x} ${offset.y}`);
             }
         }
 
         // debug
         if (this.params.debug && this.debugCounter % 90 === 0) {
-            console.log(`sprite position = ${this.showVec(this.crosshairsSprite.position)}`);
-            console.log(`sprite rotation = ${this.showVec(this.crosshairsSprite.rotation)}`);
+            console.log(`sprite position = ${this.showVec(sprite.mesh.position)}`);
+            console.log(`sprite rotation = ${this.showVec(sprite.mesh.rotation)}`);
         }
     }
 
@@ -122,22 +148,31 @@ class Crosshairs {
         this.debugCounter++;
         var targets = this.params.targets;
         var nextTarget = null;
+        var nextTargetObj = null;
 
         for (var t in targets) {
             if (targets.hasOwnProperty(t)) {
                 var target = this.params.targets[t];
-                var angle = target.direction.angleTo(cameraDirection);
+
+                // target may be disabled
+                if (target.disabled)
+                    continue;
+
+                var targetDirection = (new THREE.Vector3(0, 1, 0)).applyEuler(target.direction);
+                var angle = targetDirection.angleTo(cameraDirection);
+                var angleDegrees = Math.floor(angle / Math.PI * 1800) / 10;
+                var hitRadius = target.hitRadius ? target.hitRadius : this.params.hitRadius;
 
                 // show angle to targets for debugging purposes
-                if (this.debugCounter % 90 === 0) {
-                    console.log(`angle to ${target.name} is ${angle / Math.PI * 180}`);
-                }
+                if (this.debugCounter % 90 === 0)
+                    console.log(`crosshairs: angle to target [${target.name}] is ${angleDegrees}\u00B0`);
 
-                if (angle <= this.params.hitRadius) {
+                if (angleDegrees <= hitRadius) {
                     if (nextTarget !== null) {
                         console.log('ERROR!  overlapping targets');
                     }
                     nextTarget = target.name;
+                    nextTargetObj = target;
                 }
             }
         }
@@ -145,19 +180,20 @@ class Crosshairs {
         // emit events
         this.hitPercent = 0;
         if (nextTarget !== null && this.lastTarget === null) {
-            if (this.eventEmitter) this.eventEmitter.emitEvent('vr.targetEnter', [nextTarget]);
+            if (this.eventEmitter) this.eventEmitter.emit('targetEnter', [nextTarget]);
             this.hitStart = (new Date()).getTime();
         } else if (nextTarget === null && this.lastTarget !== null) {
-            if (this.eventEmitter) this.eventEmitter.emitEvent('vr.targetExit', [this.lastTarget]);
+            if (this.eventEmitter) this.eventEmitter.emit('targetExit', [this.lastTarget]);
             this.hitStart = 0;
         } else if (nextTarget !== null) {
-            if (this.eventEmitter) this.eventEmitter.emitEvent('vr.targetStay', [nextTarget]);
+            var hitTime = nextTargetObj.hitTime ? nextTargetObj.hitTime : this.params.hitTime;
+            if (this.eventEmitter) this.eventEmitter.emit('targetStay', [nextTarget]);
             var elapsed = (new Date()).getTime() - this.hitStart;
-            if (elapsed < this.params.hitTime) {
-                this.hitPercent = elapsed / this.params.hitTime;
-            } else if (elapsed >= this.params.hitTime) {
-                if (this.eventEmitter) this.eventEmitter.emitEvent('vr.targetSelected', [nextTarget]);
-                console.log('target selected ', nextTarget);
+            if (elapsed < hitTime) {
+                this.hitPercent = elapsed / hitTime;
+            } else if (elapsed >= hitTime) {
+                if (this.eventEmitter) this.eventEmitter.emit('targetSelected', [nextTarget]);
+                console.log(`target selected ${nextTarget}`);
                 this.hitStart = 0;
                 this.hitPercent = 1.0;
                 nextTarget = null;
@@ -165,13 +201,25 @@ class Crosshairs {
         }
         this.lastTarget = nextTarget;
 
-        // move the crosshairs
-        if (this.lastPercent !== this.hitPercent) {
-            this.lastPercent = this.hitPercent;
-            if (this.params.sprite) {
-                this.updateSprite(this.hitPercent, cameraDirection);
-            } else {
-                this.updateCrosshairs(this.hitPercent, cameraDirection);
+        // update crosshairs and target buttons
+        if (this.params.type === 'animated-buttons') {
+
+            // update each button to its percent
+            for (var tid of Object.keys(targets)) {
+                var hitPercentArg = (nextTargetObj === targets[tid]) ? this.hitPercent : 0;
+                this.updateSprite(hitPercentArg, targets[tid].sprite.direction, targets[tid].sprite);
+            }
+
+            // update the crosshairs
+            this.updateSprite(0, cameraDirection, this.params.sprite);
+        } else if (this.params.type === 'animated-crosshairs') {
+            if (this.lastPercent !== this.hitPercent) {
+                this.lastPercent = this.hitPercent;
+                if (this.params.sprite) {
+                    this.updateSprite(this.hitPercent, cameraDirection, this.params.sprite);
+                } else {
+                    this.updateCrosshairs(this.hitPercent, cameraDirection);
+                }
             }
         }
     }

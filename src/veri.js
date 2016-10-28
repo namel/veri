@@ -54,6 +54,13 @@ class Veri {
         return new THREE.Vector3(x, y, z);
     }
 
+    // convenience function to return an instance of an Euler rotation
+    static rot3(theta, phi) {
+        var thetaRad = theta / 180 * Math.PI;
+        var phiRad = phi / 180 * Math.PI;
+        return new THREE.Euler(thetaRad + Math.PI / 2, phiRad, 0, 'YXZ');
+    };
+
     // do next animation frame
     doAnimationFrame() {
         window.requestAnimationFrame(this.doAnimationFrame.bind(this));

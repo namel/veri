@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>veri - simple</title>
+		<title>veri - animated crosshairs</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<style>
@@ -43,7 +43,26 @@
                 },
                 light: {
                     position: Veri.vec3(2, 2, 2)
-                }
+                },
+                crosshairs: {
+                    debug: true,
+                    type: "animated-crosshairs",
+                    targets: [ {
+                        name: "play",
+                        direction: Veri.rot3(0, -100)
+                    }],
+                    hitRadius: 10,
+                    hitTime: 6000,
+                    sprite: {
+                        src: "../resources/sprite/circle.png",
+                        distance: 200,
+                        columns: 8,
+                        rows: 8,
+                        count: 60,
+                        objWidth: 60,
+                        objHeight: 60
+                    }
+                },
             });
 
             veri.start();

@@ -1,6 +1,6 @@
 {
   "name": "veri",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio.",
   "keywords": [
     "vr",
@@ -10,7 +10,9 @@
     "webvr",
     "360",
     "vive",
-    "oculus"
+    "oculus",
+    "crosshairs",
+    "veri"
   ],
   "homepage": "https://namel.github.io/veri/",
   "bugs": {
