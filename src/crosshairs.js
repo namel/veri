@@ -18,7 +18,6 @@ class Crosshairs {
         this.lastTarget = null;
         this.hitStart = null;
         this.hitPercent = 0;
-        this.lastPercent = -1;
     }
 
     showVec(v) {
@@ -54,9 +53,16 @@ class Crosshairs {
                 sprite.texture = spriteTexture;
                 sprite.texture.wrapS = sprite.texture.wrapT = THREE.RepeatWrapping;
 
-                var repeatX = 1 / sprite.columns;
-                var repeatY = 1 / sprite.rows;
-                sprite.texture.repeat.set(repeatX, repeatY);
+                // repeat is the number of times the texture should repeat on each
+                // axis.  when it's less than one, we indicate that it should be a
+                // fraction of the image
+                sprite.repeatX = 1 / sprite.columns;
+                sprite.repeatY = 1 / sprite.rows;
+                if (sprite.width && sprite.height) {
+                    sprite.repeatX = sprite.width / sprite.texture.image.width;
+                    sprite.repeatY = sprite.height / sprite.texture.image.height;
+                }
+                sprite.texture.repeat.set(sprite.repeatX, sprite.repeatY);
                 var geometry = new THREE.PlaneGeometry(sprite.objWidth, sprite.objHeight, 1, 1);
                 var spriteMaterial = new THREE.MeshBasicMaterial({
                     transparent: true,
@@ -90,10 +96,12 @@ class Crosshairs {
         }
 
         // update the sprite
+        // calculate row, column and corresponding offsets
         var imageIndex = Math.floor(sprite.count * percent);
-
-        sprite.texture.offset.x = (imageIndex % sprite.columns) / sprite.columns;
-        sprite.texture.offset.y = 1 - (Math.floor(imageIndex / sprite.columns) + 1) / sprite.rows;
+        var col = (imageIndex % sprite.columns);
+        var row = Math.floor(imageIndex / sprite.columns) + 1;
+        sprite.texture.offset.x = col * sprite.repeatX;
+        sprite.texture.offset.y = 1 - row * sprite.repeatY;
 
         if (sprite.texture.offset.y !== window.oldY ||
             sprite.texture.offset.x !== window.oldX) {
@@ -209,13 +217,10 @@ class Crosshairs {
             // update the crosshairs
             this.updateSprite(0, cameraDirection, this.params.sprite);
         } else if (this.params.type === 'animated-crosshairs') {
-            if (this.lastPercent !== this.hitPercent) {
-                this.lastPercent = this.hitPercent;
-                if (this.params.sprite) {
-                    this.updateSprite(this.hitPercent, cameraDirection, this.params.sprite);
-                } else {
-                    this.updateCrosshairs(this.hitPercent, cameraDirection);
-                }
+            if (this.params.sprite) {
+                this.updateSprite(this.hitPercent, cameraDirection, this.params.sprite);
+            } else {
+                this.updateCrosshairs(this.hitPercent, cameraDirection);
             }
         }
     }

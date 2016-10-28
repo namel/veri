@@ -146,33 +146,92 @@ veri.setup({
         direction: Veri.vec3(0, 0, -1) // the lookAt vector3
     },
 
-    // crosshairs:
+    // Animated Crosshairs
+    //
     // provide a list of targets that the crosshairs can activate
-    // each target must have a name and direction
+    // each target must have a name and direction.  The direction is
+    // specified using Veri.rot3 (syntactic sugar for THREE.Euler),
+    // reduced to theta (vertical angle) and phi (horizontal angle)
+    //
     // hitRadius - radians offset which is considered
     //     part of the target
+    //
     // hitTime - time in milliseconds until the target is considered "clicked"
-    // sprite - optional sprite for animation.  Include src,
-    //     columns, rows, and count.
-    //     If not specified
+    //
+    // sprite - optional sprite for animation.  Must be a "power-of-two" image,
+    //     meaning the width and height must be powers of two, though not necessarily
+    //     identical to each other. Includes attributes:
+    //     src - url
+    //     columns, rows - columns and rows in the sprite
+    //     count - number of actual images in the sprite.
+    //     objWidth, objHeight - size of invisible rectangle used to project the sprite.
+    //     width, height - if the images are not exact fractions of the sprite
+    //            width and height, specify them here.
+    //
+    //     If sprite is not specified
     //     then a small ring is used to indicate selection progress
     //
     // Note: use the event emitter to determine crosshairs state.
     crosshairs: {
+        type: "animated-crosshairs",
+        debug: false,
         targets: [ {
             name: "play",
-            direction: Veri.vec3(-1, 0, -1)
+            direction: Veri.rot3(0, -100)
         }, {
             name: "stop",
-            direction: Veri.vec3(-1, 0, -1)
+            direction: Veri.rot3(0, -80)
         }],
-        hitRadius: 0.1,
+        hitRadius: 10,
         hitTime: 6000,
         sprite: {
-            src: "../resources/sprite/all2048.png",
-            columns: 16,
-            rows: 13,
-            count: 208
+            src: "../resources/sprite/circle.png",
+            distance: 300,
+            columns: 8,
+            rows: 8,
+            count: 60,
+            objWidth: 60,
+            objHeight: 60,
+            width: 60,
+            height: 60
+        }
+    },
+
+    // Animated buttons
+    //
+    // Rather than having an animated crosshairs, in this case the
+    // buttons themselves start animating when a static crosshairs enters
+    // the button area.
+    //
+    // Provide a list of animated targets that the crosshairs can activate.
+    // Each target must have a name and direction, a hitRadius, a hitTime,
+    // and the corresponding sprite descriptor.  The sprite has its own
+    // direction but it typically matches the target.
+    //
+    // sprite - describe the actual crosshairs image.  Not really a sprite
+    //
+    // Note: use the event emitter to determine crosshairs state.
+    crosshairs: {
+        type: "animated-buttons",
+        debug: false,
+        targets: [{
+            name: "start",
+            direction: Veri.rot3(0, -100),
+            hitRadius: 16,
+            hitTime: 6000,
+            sprite: {
+                // same as above, but also include a direction
+                direction: Veri.rot3(0, -100)
+            }
+        }],
+        sprite: {
+            src: "resources/img/crosshairs.png",
+            distance: 380,
+            objWidth: 50,
+            objHeight: 50,
+            columns: 1,
+            rows: 1,
+            count: 1
         }
     },
 
