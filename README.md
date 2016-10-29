@@ -137,6 +137,8 @@ veri.setup({
 
     // camera:
     // position and camera settings.  For more information refer to THREEjs
+    // camera direction is only relevant when vrEnabled is false.  When it is
+    // set to true the vr-input device controls provide a real value.
     camera: {
         pos: Veri.vec3(0, 0, 0),
         fov: 35,          // wider -> narrower  (10..100)

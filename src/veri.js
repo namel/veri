@@ -1,4 +1,4 @@
-/* global DeviceOrientationController */
+/* global  */
 "use strict";
 
 const ee = require('event-emitter');
@@ -59,7 +59,7 @@ class Veri {
         var thetaRad = theta / 180 * Math.PI;
         var phiRad = phi / 180 * Math.PI;
         return new THREE.Euler(thetaRad + Math.PI / 2, phiRad, 0, 'YXZ');
-    };
+    }
 
     // do next animation frame
     doAnimationFrame() {
@@ -88,7 +88,7 @@ class Veri {
         this.stats.update();
         if (!this.originalCameraDirection) {
             this.originalCameraDirection = cameraDirection.clone();
-            console.log(`setting original camera direction to ${Veri.showVec(this.originalCameraDirection)}`);
+            console.log(`setting original camera direction to ${Veri.showVec(cameraDirection)}`);
         }
 
         // check element resize
@@ -264,12 +264,13 @@ class Veri {
         document.body.appendChild(this.stats.dom);
 
         // obtain parameters, applying defaults where necessary
-        // TODO: add generic & recursive defaults application
         this.vrParams = vrParams;
-        if (!vrParams.camera.direction) {
-            vrParams.camera.direction = new THREE.Vector3(0, 0, -1);
-        } else {
+        if (vrParams.camera.direction) {
             vrParams.camera.direction.normalize();
+        } else {
+            // Note: this has no effect when vrEnabled is set.
+            // in those cases the VRControls library takes over the camera direction.
+            vrParams.camera.direction = new THREE.Vector3(0, 0, -1);
         }
 
         // create scene and camera
