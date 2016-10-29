@@ -1,26 +1,27 @@
-# veri -  Virtual Reality Video Player #
+[![veri logo](https://s3.amazonaws.com/veri.namel/logo.png)](https://namel.github.io/veri/)
+# veri - A Virtual Reality Web Video Player #
 
 This javascript library makes it easy to play VR videos from a browser.
-You can use it to play VR videos in HTC Vive, Oculus Rift, and Samsung
-Gear.  It provides the functionality which is often useful with VR videos,
+You can use it to play VR videos in **HTC Vive**, **Oculus Rift**, and **Samsung
+Gear**.  It provides the functionality which is often useful with VR videos,
 such as headset movement detection; ambisonic audio interface; hand-held
 controller interface and rendering; rendering of 3D OBJ objects over the
-video layer, or inside the VR scene, which can serve as buttons or
-crosshairs.
+video layer, or inside the VR scene; crosshairs support, with animated
+buttons, or animated crosshairs.
 
 When embedded in an HTML page, Veri will set up a WebGL canvas and a THREE.js WebVR environment which renders a VR video.  It can play stereoscopic videos (side-by-side and
 top-to-bottom) as well as monoscopic videos.
 
-To view the video you will need a browser which supports WebVR.  For HTC
-Vive this means you will need to download a special build of Chromium.  For
-Oculus Rift you will need a WebVR version of Mozilla, and on Samsung Gear you
+To view the video you will need a browser which supports WebVR.  For *HTC
+Vive* this means you will need to download a special build of Chromium.  For
+*Oculus Rift* you will need a WebVR version of Mozilla, and on *Samsung Gear* you
 can use the Samsung Internet browser.  See [WebVR Info](webvr.info) for
 more information on that.
 
 For a regular PC or Mac with no headset attached, you can still view 360
 videos, or add the [WebVR API Emulation](https://chrome.google.com/webstore/detail/webvr-api-emulation/gbdnpaebafagioggnhkacnaaahpiefil) extension which shows you what would be seen on the headset.
 
-For more information see the [Veri Home Page](https://namel.github.io/veri/)
+For more information see the [veri Home Page](https://namel.github.io/veri/)
 
 
 ### Worked Example ###
@@ -52,8 +53,7 @@ veri.setup({
         fov: 90,          // wider -> narrower  (10..100)
         aspect: window.innerWidth / window.innerHeight,
         near: 0.1,
-        far: 1000,
-        direction: Veri.vec3(0, 0, -1)
+        far: 1000
     },
     renderer: {
         width: window.innerWidth,
@@ -83,6 +83,11 @@ The VR plugin supports the following:
     * side-by-side frames supported
     * top-to-bottom frames supported
 * setup a monoscopic 360 video
+* crosshairs - a small object at the center of the field of vision for pointing to targets in the VR scene
+    * default circle animation
+    * supports sprite animation
+        * buttons can be animations
+        * the crosshairs can be animated
 * setup interaction objects using an overlay.  Objects are 3D objects and their textures, provided in OBJ file format.
     * overlay fixed in the camera's reference frame
     * overlay fixed in the video's reference frame
@@ -96,9 +101,6 @@ The VR plugin supports the following:
 * audio implemented by [jsAmbisonics](https://github.com/polarch/JSAmbisonics)
     * positional audio sources
     * ambisonic audio sources
-* crosshairs - a small object at the center of the field of vision for pointing to targets in the VR scene
-    * default circle animation
-    * supports sprite animation
 * general event emitter functionality
 
 The following are not yet supported:
@@ -136,9 +138,9 @@ veri.setup({
     },
 
     // camera:
-    // position and camera settings.  For more information refer to THREEjs
+    // position and camera settings.  For more information refer to THREEjs.
     // camera direction is only relevant when vrEnabled is false.  When it is
-    // set to true the vr-input device controls provide a real value.
+    // set to true the vr-input device controls already provide a direction.
     camera: {
         pos: Veri.vec3(0, 0, 0),
         fov: 35,          // wider -> narrower  (10..100)
