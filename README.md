@@ -1,5 +1,5 @@
 [![veri logo](https://s3.amazonaws.com/veri.namel/logo.png)](https://namel.github.io/veri/)
-# veri - A Virtual Reality Web Video Player #
+# A Virtual Reality Web Video Player #
 
 This javascript library makes it easy to play VR videos from a browser.
 You can use it to play VR videos in **HTC Vive**, **Oculus Rift**, and **Samsung
