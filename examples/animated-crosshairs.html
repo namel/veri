@@ -46,10 +46,11 @@
                 crosshairs: {
                     debug: true,
                     type: "animated-crosshairs",
-                    targets: [ {
-                        name: "play",
-                        direction: Veri.rot3(0, -100)
-                    }],
+                    targets: {
+                        "play": {
+                            direction: Veri.rot3(0, -100)
+                        }
+                    },
                     hitRadius: 10,
                     hitTime: 6000,
                     sprite: {

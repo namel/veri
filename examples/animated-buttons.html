@@ -42,7 +42,67 @@
                 },
                 light: {
                     position: Veri.vec3(2, 2, 2)
-                }
+                },
+                crosshairs: {
+                    type: "animated-buttons",
+                    debug: true,
+                    targets: {
+                        "button1": {
+                            direction: Veri.rot3(0, -100),
+                            hitRadius: 16,
+                            hitTime: 3000,
+                            sprite: {
+                                src: "../resources/sprite/light_003.png",
+                                distance: 400,
+                                columns: 5,
+                                rows: 6,
+                                count: 26,
+                                objWidth: 192,
+                                objHeight: 192,
+                                direction: Veri.rot3(0, -100)
+                            }
+                        },
+                        "button2": {
+                            direction: Veri.rot3(0, -60),
+                            hitRadius: 16,
+                            hitTime: 3000,
+                            sprite: {
+                                src: "../resources/sprite/magic_007.png",
+                                distance: 400,
+                                columns: 5,
+                                rows: 4,
+                                count: 20,
+                                objWidth: 192,
+                                objHeight: 192,
+                                direction: Veri.rot3(0, -60)
+                            }
+                        },
+                        "button3": {
+                            direction: Veri.rot3(0, -20),
+                            hitRadius: 16,
+                            hitTime: 3000,
+                            sprite: {
+                                src: "../resources/sprite/wind_001.png",
+                                distance: 400,
+                                columns: 5,
+                                rows: 5,
+                                count: 25,
+                                objWidth: 192,
+                                objHeight: 192,
+                                direction: Veri.rot3(0, -20)
+                            }
+                        }
+                    },
+                    sprite: {
+                        src: "resources/img/crosshairs.png",
+                        distance: 380,
+                        objWidth: 50,
+                        objHeight: 50,
+                        columns: 1,
+                        rows: 1,
+                        count: 1
+                    }
+                },
             });
 
             veri.start();

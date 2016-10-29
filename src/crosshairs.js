@@ -8,7 +8,6 @@ class Crosshairs {
         this.ringBufferMesh = null;
         this.crosshairsSprite = null;
         this.spriteTexture = null;
-        this.spriteLoadingStarted = null;
         this.scene = null;
         this.params = null;
         this.eventEmitter = null;
@@ -37,18 +36,17 @@ class Crosshairs {
         }
     }
 
-    updateSprite(percent, direction, position) {
+    updateSprite(percent, direction, sprite) {
 
         // load the sprite image now if this hasn't happened yet
-        var sprite = this.params.sprite;
-        if (!this.spriteLoadingStarted) {
+        if (!sprite.loadingStarted) {
 
             // instantiate a loader
             var loader = new THREE.TextureLoader();
             loader.crossOrigin = "";
 
             // load a resource
-            this.spriteLoadingStarted = true;
+            sprite.loadingStarted = true;
             loader.load(sprite.src, spriteTexture => {
                 sprite.texture = spriteTexture;
                 sprite.texture.wrapS = sprite.texture.wrapT = THREE.RepeatWrapping;
@@ -103,10 +101,10 @@ class Crosshairs {
         sprite.texture.offset.x = col * sprite.repeatX;
         sprite.texture.offset.y = 1 - row * sprite.repeatY;
 
-        if (sprite.texture.offset.y !== window.oldY ||
-            sprite.texture.offset.x !== window.oldX) {
-            window.oldY = sprite.texture.offset.y;
-            window.oldX = sprite.texture.offset.x;
+        if (sprite.texture.offset.y !== sprite.oldY ||
+            sprite.texture.offset.x !== sprite.oldX) {
+            sprite.oldY = sprite.texture.offset.y;
+            sprite.oldX = sprite.texture.offset.x;
             if (this.params.debug) {
                 var offset = sprite.texture.offset;
                 console.log(`percent=${percent} setting sprites to ${offset.x} ${offset.y}`);
@@ -169,13 +167,13 @@ class Crosshairs {
 
                 // show angle to targets for debugging purposes
                 if (this.debugCounter % 90 === 0)
-                    console.log(`crosshairs: angle to target [${target.name}] is ${angleDegrees}\u00B0`);
+                    console.log(`crosshairs: angle to target [${t}] is ${angleDegrees}\u00B0`);
 
                 if (angleDegrees <= hitRadius) {
                     if (nextTarget !== null) {
                         console.log('ERROR!  overlapping targets');
                     }
-                    nextTarget = target.name;
+                    nextTarget = t;
                     nextTargetObj = target;
                 }
             }
