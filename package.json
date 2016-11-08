@@ -1,6 +1,6 @@
 {
   "name": "veri",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio.",
   "keywords": [
     "vr",
@@ -44,7 +44,7 @@
     "build": "browserify src/veri.js -o dist/veri.js",
     "watch": "watchify src/veri.js -o dist/veri.js",
     "open": "opener http://127.0.0.1:8080/examples/simple.html",
-    "serve": "node .\\node_modules\\http-server\\bin\\http-server",
+    "serve": "http-server",
     "test": "parallelshell \"npm run serve\" \"npm run open\""
   },
   "author": {

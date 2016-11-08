@@ -12,6 +12,7 @@ require('./lib/VREffect');
 const DeviceOrientationController = require('./lib/DeviceOrientationController');
 const Audio = require('./audio');
 const Crosshairs = require('./crosshairs');
+//const ambisonics = require('./lib/ambisonics.umd');
 
 class Veri {
 
@@ -63,7 +64,7 @@ class Veri {
 
     // do next animation frame
     doAnimationFrame() {
-        window.requestAnimationFrame(this.doAnimationFrame.bind(this));
+        this.effect.requestAnimationFrame(this.doAnimationFrame.bind(this));
         if (this.videoPlaying) {
             this.draw(this.renderer.domElement, this.renderer.context, this.videoElement);
             if (typeof this.vrParams.onDraw === 'function') {

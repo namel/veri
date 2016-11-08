@@ -1,4 +1,5 @@
 const THREE = require('three');
+const ambisonics = require('./lib/ambisonics.min');
 
 class Audio {
 
@@ -14,7 +15,7 @@ class Audio {
         var fetchSound = new XMLHttpRequest(); // Load the Sound with XMLHttpRequest
         fetchSound.open("GET", url, true); // Path to Audio File
         fetchSound.responseType = "arraybuffer"; // Read as Binary Data
-        fetchSound.onload = function() {
+        fetchSound.onload = () => {
             this.context.decodeAudioData(fetchSound.response)
                 .then(doAfterLoading);
         };
@@ -36,7 +37,7 @@ class Audio {
             this.audio.position.copy(vrParams.audio.position);
             this.audio.up = vrControl.vec3(0, 1, 0);
             this.audioLoader = new THREE.AudioLoader();
-            this.audioLoader.load(vrParams.audio.src, function(buffer) {
+            this.audioLoader.load(vrParams.audio.src, buffer => {
                 this.audio.setBuffer(buffer);
                 this.audio.setLoop(true);
                 this.audio.play();
@@ -49,15 +50,15 @@ class Audio {
             var sound;
 
             // initialize ambisonic rotator
-            this.rotator = new webAudioAmbisonic.sceneRotator(context, 1); // eslint-disable-line
+            this.rotator = new ambisonics.sceneRotator(this.context, 1); // eslint-disable-line
             console.log(this.rotator);
 
             // initialize ambisonic decoder
-            var decoder = new webAudioAmbisonic.binDecoder(context, 1); // eslint-disable-line
+            var decoder = new ambisonics.binDecoder(this.context, 1); // eslint-disable-line
             console.log(decoder);
 
             // FuMa to ACN converter
-            var converterF2A = new webAudioAmbisonic.converters.wxyz2acn(context); // eslint-disable-line
+            var converterF2A = new ambisonics.converters.wxyz2acn(this.context); // eslint-disable-line
             console.log(converterF2A);
 
             // output gain
@@ -70,7 +71,7 @@ class Audio {
             gainOut.connect(this.context.destination);
 
             // load the audio
-            this.loadSample(vrParams.audio.src, function(decodedBuffer) {
+            this.loadSample(vrParams.audio.src, decodedBuffer => {
                 sound = this.context.createBufferSource();
                 sound.buffer = decodedBuffer;
                 sound.loop = true;
