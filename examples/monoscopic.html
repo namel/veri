@@ -30,6 +30,7 @@
             veri.setup({
                 controls: "auto",
                 vrEnabled: false,
+                polyfillWebVR: !!window.location.search.match("polyfill"),
                 initializeCanvas: true,
                 camera: {
                     fov: 90,          // wider -> narrower  (10..100)

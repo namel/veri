@@ -28,6 +28,7 @@
             veri.setup({
                 controls: "auto",
                 vrEnabled: true,
+                polyfillWebVR: !!window.location.search.match("polyfill"),
                 stereoscopic: "left-to-right",
                 initializeCanvas: true,
                 camera: {

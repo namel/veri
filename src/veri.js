@@ -12,7 +12,6 @@ require('./lib/VREffect');
 const DeviceOrientationController = require('./lib/DeviceOrientationController');
 const Audio = require('./audio');
 const Crosshairs = require('./crosshairs');
-//const ambisonics = require('./lib/ambisonics.umd');
 
 class Veri {
 
@@ -235,6 +234,11 @@ class Veri {
         // debugging
         if (vrParams.debug)
             this.debugCounter = 0;
+
+        // use polyfill
+        if (vrParams.polyfillWebVR) {
+            require('webvr-polyfill');
+        }
 
         // Interface tools
         this.raycaster = new THREE.Raycaster();

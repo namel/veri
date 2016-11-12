@@ -124,6 +124,12 @@ veri.setup({
     // the video is rendered on the VR hardware, using WebVR
     vrEnabled: true,
 
+    // polyfillWebVR:
+    // if set to true, WebVR is poly-filled-in
+    // to control from URL query string, set this to
+    // !!window.location.search.match("polyfill")
+    polyfillWebVR: false,
+
     // stereoscopic:
     // can be set to "side-by-side" if the eye frames
     // are next to each other, or "top-to-bottom"

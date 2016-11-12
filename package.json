@@ -28,7 +28,8 @@
   "repository": "namel/veri",
   "dependencies": {
     "ambisonics": "^0.1.0",
-    "three": "^0.75.0"
+    "three": "^0.75.0",
+    "webvr-polyfill": "^0.9.23"
   },
   "devDependencies": {
     "browserify": "^13.1.0",
