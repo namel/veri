@@ -1,6 +1,6 @@
 {
   "name": "veri",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Enables functionality for VR videos, including 360, stereoscopic, 3D objects, interaction and control, crosshairs, and ambisonic audio.",
   "keywords": [
     "vr",
@@ -50,7 +50,7 @@
   },
   "author": {
     "name": "Gary Weiss",
-    "email": "garyweiss74@gmail.com"
+    "email": "fourvelocity@gmail.com"
   },
   "license": "MIT"
 }
